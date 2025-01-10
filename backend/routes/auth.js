@@ -21,31 +21,34 @@ router.post("/register", async (req, res) => {
   }
 });
 router.post("/login", async (req, res) => {
-  const { username, password } = req.body;
+  console.log("Request received:", req.body);
 
-  console.log("Request body:", req.body);
+  if (!req.body) {
+    return res.status(400).send("Request body is missing");
+  }
+
+  const { username, password } = req.body;
+  console.log("Username:", username);
+  console.log("Password:", password);
 
   if (!username || !password) {
     return res.status(400).send("Username and password are required");
   }
 
   try {
+    console.log("Searching for user in database...");
     const user = await User.findOne({ username });
     console.log("User found:", user);
 
     if (!user) return res.status(400).send("User not found");
 
-    console.log("Provided password:", password);
-    console.log("Stored hashed password:", user.password);
-
+    console.log("Comparing passwords...");
     const isMatch = await bcrypt.compare(password, user.password);
     console.log("Password match:", isMatch);
 
     if (!isMatch) return res.status(400).send("Invalid credentials");
 
-    console.log("User ID:", user._id);
-    console.log("JWT Secret:", process.env.JWT_SECRET);
-
+    console.log("Generating JWT...");
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
@@ -53,7 +56,9 @@ router.post("/login", async (req, res) => {
 
     res.json({ token });
   } catch (err) {
-    console.error("Login error:", err);
+    console.log("Login error:", err);
+    console.log("Provided password:", password);
+    console.log("JWT Secret:", process.env.JWT_SECRET);
     res.status(500).send("Server error");
   }
 });
