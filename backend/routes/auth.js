@@ -1,65 +1,62 @@
 const express = require("express");
-const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const User = require("../models/User");
+
 const router = express.Router();
 
 router.post("/register", async (req, res) => {
   const { username, password } = req.body;
 
+  if (!username || !password) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
   try {
     const existingUser = await User.findOne({ username });
     if (existingUser) {
-      return res.status(400).send("Username already exists");
+      return res.status(400).json({ error: "User already exists" });
     }
+
     const user = new User({ username, password });
     await user.save();
-    res.status(201).send("User registered");
+    res.status(201).json({ message: "User registered successfully" });
   } catch (err) {
-    console.error("Registration error:", err);
-    res.status(400).send("Error registering user");
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
   }
 });
+
 router.post("/login", async (req, res) => {
-  console.log("Request received:", req.body);
-
-  if (!req.body) {
-    return res.status(400).send("Request body is missing");
-  }
-
   const { username, password } = req.body;
-  console.log("Username:", username);
-  console.log("Password:", password);
 
   if (!username || !password) {
-    return res.status(400).send("Username and password are required");
+    return res.status(400).json({ error: "All fields are required" });
   }
 
   try {
-    console.log("Searching for user in database...");
     const user = await User.findOne({ username });
-    console.log("User found:", user);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-    if (!user) return res.status(400).send("User not found");
-
-    console.log("Comparing passwords...");
     const isMatch = await bcrypt.compare(password, user.password);
-    console.log("Password match:", isMatch);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
 
-    if (!isMatch) return res.status(400).send("Invalid credentials");
-
-    console.log("Generating JWT...");
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
-    console.log("Generated token:", token);
 
-    res.json({ token });
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      user: { id: user._id, username: user.username },
+    });
   } catch (err) {
-    console.log("Login error:", err);
-    console.log("Provided password:", password);
-    console.log("JWT Secret:", process.env.JWT_SECRET);
-    res.status(500).send("Server error");
+    console.error("Error in /login:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 

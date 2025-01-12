@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import './App.css';
 
 const App = () => {
   const [username, setUsername] = useState('');
@@ -24,22 +25,28 @@ const App = () => {
   };
 
   return (
-    <div>
-      <h1>Login</h1>
-      <input
-        type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button onClick={handleLogin}>Login</button>
-      <button onClick={handleRegister}>Register</button>
+    <div className="app-container">
+      <div className="form-container">
+        <h1 className="form-title">Login</h1>
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          className="input-field"
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="input-field"
+        />
+        <div className="button-container">
+          <button onClick={handleLogin} className="button login-btn">Login</button>
+          <button onClick={handleRegister} className="button register-btn">Register</button>
+        </div>
+      </div>
     </div>
   );
 };
