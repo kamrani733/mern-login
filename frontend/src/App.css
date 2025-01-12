@@ -29,13 +29,12 @@ body {
   width: 300px;
 }
 .error-message {
-  color: red; /* Default to red for error */
+  color: red;  
   font-size: 14px;
   margin-top: 10px;
 }
 
-/* If the message is success, change the color */
-.success-message {
+ .success-message {
   color: green;
   font-size: 14px;
   margin-top: 10px;

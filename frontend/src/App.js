@@ -7,7 +7,7 @@ const App = () => {
   const [password, setPassword] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
-  const [error, setError] = useState(""); // Add an error state
+  const [error, setError] = useState("");  
 
   const handleLogin = async () => {
     try {
@@ -17,9 +17,9 @@ const App = () => {
       });
       alert(`Login successful!`);
       setIsLoggedIn(true);
-      setError(""); // Reset error if login is successful
+      setError("");  
     } catch (err) {
-      setError("Login failed. Please check your credentials."); // Show error message
+      setError("Login failed. Please check your credentials."); 
     }
   };
 
@@ -31,9 +31,9 @@ const App = () => {
       });
       alert("User registered");
       setIsRegistered(true);
-      setError(""); // Reset error if registration is successful
+      setError(""); 
     } catch (err) {
-      setError("Registration failed. Please try again."); // Show error message
+      setError("Registration failed. Please try again."); 
     }
   };
 
@@ -66,7 +66,7 @@ const App = () => {
             </button>
           </div>
 
-          {error && <p className="error-message">{error}</p>} {/* Show error message */}
+          {error && <p className="error-message">{error}</p>}  
 
         </>
       </div>
