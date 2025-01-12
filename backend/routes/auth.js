@@ -5,11 +5,23 @@ const User = require("../models/User");
 
 const router = express.Router();
 
+ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 router.post("/register", async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
     return res.status(400).json({ error: "All fields are required" });
+  }
+
+  if (!emailRegex.test(username)) {
+    return res.status(400).json({ error: "Invalid email format" });
+  }
+
+  if (password.length < 5) {
+    return res
+      .status(400)
+      .json({ error: "Password must be at least 5 characters long" });
   }
 
   try {
@@ -18,7 +30,9 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ error: "User already exists" });
     }
 
-    const user = new User({ username, password });
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = new User({ username, password: hashedPassword });
     await user.save();
     res.status(201).json({ message: "User registered successfully" });
   } catch (err) {
@@ -32,6 +46,16 @@ router.post("/login", async (req, res) => {
 
   if (!username || !password) {
     return res.status(400).json({ error: "All fields are required" });
+  }
+
+  if (!emailRegex.test(username)) {
+    return res.status(400).json({ error: "Invalid email format" });
+  }
+
+  if (password.length < 5) {
+    return res
+      .status(400)
+      .json({ error: "Password must be at least 5 characters long" });
   }
 
   try {
