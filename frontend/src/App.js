@@ -57,7 +57,7 @@ const Login = ({ setIsLoggedIn, setError, error }) => {
   };
 
   return (
-    <div className="app-container">
+    <div>
       <div className="form-container">
         <h1 className="form-title">Login</h1>
         <input
@@ -110,10 +110,10 @@ const Welcome = ({ setIsLoggedIn }) => {
   };
 
   return (
-    <div className="welcome-container">
+    <div >
       <h1>Welcome!</h1>
       <p>You are now logged in.</p>
-      <button onClick={handleLogout} className="button logout-btn">
+      <button onClick={handleLogout} className="  logout-btn">
         Logout
       </button>
     </div>
