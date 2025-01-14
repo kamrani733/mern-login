@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-UserSchema.pre("save", async function (next) {
+ userSchema.pre("save", async function (next) {
   try {
     if (this.isModified("password")) {
       this.password = await bcrypt.hash(this.password, 10);
@@ -25,8 +25,8 @@ UserSchema.pre("save", async function (next) {
   }
 });
 
-UserSchema.methods.comparePassword = async function (candidatePassword) {
+userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-module.exports = mongoose.model("User", UserSchema);
+module.exports = mongoose.model("User", userSchema);
