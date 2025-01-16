@@ -3,17 +3,16 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const authenticate = require("../middleware/authMiddleware");
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
 // Initialize router
 const router = express.Router();
 
 /**
- * @route POST /register
- * @desc Register a new user
+ * @route POST /login
+ * @desc Login an existing user
  */
-// In the login route, add logs to track the process:
-const jwt = require('jsonwebtoken');
-
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
@@ -35,10 +34,17 @@ router.post('/login', async (req, res) => {
       { expiresIn: '1h' }
     );
 
-    // Send the token as JSON response
+    // Set token in cookies with secure attributes
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+      maxAge: 3600000
+    });
+
+    // Send response with token and user data
     return res.json({
       message: 'Login successful',
-      token,  // Include the token in the response
       user: { username: user.username, role: user.role },
     });
   } catch (error) {
@@ -46,19 +52,15 @@ router.post('/login', async (req, res) => {
   }
 });
 
-
-
 /**
  * @route POST /register
  * @desc Register a new user
  */
 router.post("/register", async (req, res) => {
   const { username, password, role } = req.body;
-  console.log("Registration request body:", req.body);
 
   // Validate required fields
   if (!username || !password) {
-    console.error("Registration failed: Missing fields");
     return res.status(400).json({ error: "All fields are required" });
   }
 
@@ -66,7 +68,6 @@ router.post("/register", async (req, res) => {
     // Check if the user already exists
     const existingUser = await User.findOne({ username });
     if (existingUser) {
-      console.error(`Registration failed: User ${username} already exists`);
       return res.status(400).json({ error: "User already exists" });
     }
 
@@ -76,28 +77,22 @@ router.post("/register", async (req, res) => {
     // Create and save the new user with plain-text password
     const user = new User({
       username,
-      password, // Save plain-text password directly
+      password,  // Save plain-text password directly
       role: userRole,
     });
 
     await user.save();
-    console.log(`User ${username} registered successfully`);
     res.status(201).json({ message: "User registered successfully" });
   } catch (err) {
-    console.error("Registration error:", err.message);
     res.status(500).json({ error: "Server error" });
   }
 });
-
-
-
 
 /**
  * @route GET /protected
  * @desc Access a protected route (requires authentication)
  */
 router.get("/protected", authenticate, (req, res) => {
-  console.log("Accessing protected route:", req.user);
   res.status(200).json({
     message: "Protected route accessed",
     user: req.user,
@@ -110,7 +105,6 @@ router.get("/protected", authenticate, (req, res) => {
  */
 router.get("/logout", (req, res) => {
   res.clearCookie("token");
-  console.log("User logged out");
   res.status(200).json({ message: "Logged out successfully" });
 });
 

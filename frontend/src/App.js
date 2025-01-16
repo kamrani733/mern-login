@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import {
   BrowserRouter as Router,
   Routes,
@@ -8,11 +7,6 @@ import {
   useNavigate,
 } from "react-router-dom";
 import "./App.css";
-
-const api = axios.create({
-  baseURL: "http://localhost:5000/api/auth",
-  withCredentials: true,
-});
 
 const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
   const [role, setRoleState] = useState("user"); // Default role set to 'user'
@@ -28,19 +22,33 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
     }
     setLoading(true);
     try {
-      const res = await api.post("/login", { username, password });
-      alert("Login successful!");
-      setIsLoggedIn(true);
-      setError("");
-      setRole(res.data.user.role);  // Set role after successful login
-      navigate("/welcome");
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+        credentials: "include", // Make sure cookies are included
+      });
+  
+      const data = await response.json();
+      if (response.ok) {
+        alert("Login successful!");
+        setIsLoggedIn(true);
+        setError("");
+        setRole(data.user.role); // Set role after successful login
+        navigate("/welcome");
+      } else {
+        setError(data.message || "Login failed. Please check your credentials.");
+      }
     } catch (err) {
-      const errorMsg = err.response?.data?.message || "Login failed. Please check your credentials.";
-      setError(errorMsg);
+      console.error("Error:", err);
+      setError("Login failed. Please try again.");
     } finally {
       setLoading(false);
     }
   };
+  
 
   const handleRegister = async () => {
     if (!username || !password) {
@@ -49,12 +57,25 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
     }
     setLoading(true);
     try {
-      await api.post("/register", { username, password, role });
-      alert("Registration successful! Please log in.");
-      navigate("/");
+      const response = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password, role }),
+        credentials: "include", // Make sure cookies are included
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert("Registration successful! Please log in.");
+        navigate("/");
+      } else {
+        setError(data.message || "Registration failed. Please try again.");
+      }
     } catch (err) {
-      const errorMsg = err.response?.data?.message || "Registration failed. Please try again.";
-      setError(errorMsg);
+      console.error("Error:", err);
+      setError("Registration failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -133,10 +154,15 @@ const App = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await api.get("/protected");
-        if (res.data.user) {
+        const res = await fetch("http://localhost:5000/api/auth/protected", {
+          method: "GET",
+          credentials: "include", // Make sure cookies are included
+        });
+
+        const data = await res.json();
+        if (res.ok && data.user) {
           setIsLoggedIn(true);
-          setRole(res.data.user.role);  // Store role if the user is logged in
+          setRole(data.user.role); // Store role if the user is logged in
         }
       } catch (err) {
         setIsLoggedIn(false);

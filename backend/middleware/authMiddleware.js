@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 
+// Authentication middleware
 const authenticate = (req, res, next) => {
   const token = req.cookies.token;  // Read token from cookies
 
