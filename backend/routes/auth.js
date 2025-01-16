@@ -1,11 +1,9 @@
-
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const authenticate = require("../middleware/authMiddleware");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-
 
 const router = express.Router();
 
@@ -27,14 +25,12 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid password' });
     }
 
-    
     const token = jwt.sign(
       { id: user._id, username: user.username, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
 
-    
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -42,7 +38,6 @@ router.post('/login', async (req, res) => {
       maxAge: 3600000
     });
 
-    
     return res.json({
       message: 'Login successful',
       user: { username: user.username, role: user.role },
@@ -59,25 +54,21 @@ router.post('/login', async (req, res) => {
 router.post("/register", async (req, res) => {
   const { username, password, role } = req.body;
 
-  
   if (!username || !password) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
   try {
-    
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       return res.status(400).json({ error: "User already exists" });
     }
 
-    
     const userRole = role || "user";
 
-    
     const user = new User({
       username,
-      password,  
+      password,
       role: userRole,
     });
 
@@ -108,5 +99,24 @@ router.get("/logout", (req, res) => {
   res.status(200).json({ message: "Logged out successfully" });
 });
 
+/**
+ * @route GET /users
+ * @desc Get a list of all users (requires authentication and admin role)
+ */
+router.get("/users", authenticate, async (req, res) => {
+  try {
+    // Check if the user is an admin
+    if (req.user.role !== "admin") {
+      return res.status(403).json({ error: "Access denied. Admins only." });
+    }
+
+    // Fetch all users from the database
+    const users = await User.find({}, { password: 0 }); // Exclude passwords from the response
+
+    res.status(200).json({ users });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
 
 module.exports = router;

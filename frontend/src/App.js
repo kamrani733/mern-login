@@ -9,11 +9,11 @@ import {
 import "./App.css";
 
 const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
-  const [role, setRoleState] = useState("user"); 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [role, setRoleState] = useState("user");
 
   const handleLogin = async () => {
     if (!username || !password) {
@@ -28,18 +28,20 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ username, password }),
-        credentials: "include", 
+        credentials: "include",
       });
-  
+
       const data = await response.json();
       if (response.ok) {
         alert("Login successful!");
         setIsLoggedIn(true);
         setError("");
-        setRole(data.user.role); 
+        setRole(data.user.role);
         navigate("/welcome");
       } else {
-        setError(data.message || "Login failed. Please check your credentials.");
+        setError(
+          data.message || "Login failed. Please check your credentials."
+        );
       }
     } catch (err) {
       console.error("Error:", err);
@@ -48,7 +50,6 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
       setLoading(false);
     }
   };
-  
 
   const handleRegister = async () => {
     if (!username || !password) {
@@ -62,8 +63,8 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, password, role }),
-        credentials: "include", 
+        body: JSON.stringify({ username, password, role: role }),
+        credentials: "include",
       });
 
       const data = await response.json();
@@ -98,14 +99,7 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
         onChange={(e) => setPassword(e.target.value)}
         className="input-field"
       />
-      <select
-        value={role}
-        onChange={(e) => setRoleState(e.target.value)}
-        className="input-field"
-      >
-        <option value="user">User</option>
-        <option value="admin">Admin</option>
-      </select>
+
       {error && <p className="error-message">{error}</p>}
       <div className="button-container">
         <button
@@ -127,42 +121,78 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
   );
 };
 
-const Welcome = () => {
-  return (
-    <div>
-      <h1>Welcome!</h1>
-      <p>You are logged in as a User.</p>
-    </div>
-  );
-};
-
-const AdminPage = () => {
-  return (
-    <div>
-      <h1>Admin Dashboard</h1>
-      <p>Welcome to the Admin page.</p>
-    </div>
-  );
-};
-
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [role, setRole] = useState("user");
   const [error, setError] = useState("");
-  const [role, setRole] = useState("");
   const [loading, setLoading] = useState(true);
+
+  // Add these state variables here
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setRole("user");
+  };
+
+  const Welcome = () => (
+    <div>
+      <h1>Welcome!</h1>
+      <p>You are logged in as a {role}.</p>
+      <button className="button logout-btn" onClick={handleLogout}>
+        Logout
+      </button>
+    </div>
+  );
+
+  const AdminPage = ({ username, setUsername, password, setPassword, role, setRole, handleLogout }) => {
+    return (
+      <div>
+        <h1>Admin Dashboard</h1>
+        <p>Welcome to the Admin page.</p>
+        {/* <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          className="input-field"
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="input-field"
+        />
+
+        <select
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+          className="input-field"
+        >
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select> */}
+        <button className="button logout-btn" onClick={handleLogout}>
+          Logout
+        </button>
+      </div>
+    );
+  };
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
         const res = await fetch("http://localhost:5000/api/auth/protected", {
           method: "GET",
-          credentials: "include", 
+          credentials: "include",
         });
 
         const data = await res.json();
         if (res.ok && data.user) {
           setIsLoggedIn(true);
-          setRole(data.user.role); 
+          setRole(data.user.role);
         }
       } catch (err) {
         setIsLoggedIn(false);
@@ -198,18 +228,22 @@ const App = () => {
         <Route
           path="/welcome"
           element={
-            isLoggedIn && role === "user" ? (
-              <Welcome />
-            ) : (
-              <Navigate to="/" />
-            )
+            isLoggedIn && role === "user" ? <Welcome /> : <Navigate to="/" />
           }
         />
         <Route
           path="/admin"
           element={
             isLoggedIn && role === "admin" ? (
-              <AdminPage />
+              <AdminPage
+                username={username}
+                setUsername={setUsername}
+                password={password}
+                setPassword={setPassword}
+                role={role}
+                setRole={setRole}
+                handleLogout={handleLogout}
+              />
             ) : (
               <Navigate to="/" />
             )
@@ -219,5 +253,6 @@ const App = () => {
     </Router>
   );
 };
+
 
 export default App;
