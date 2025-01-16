@@ -9,7 +9,7 @@ import {
 import "./App.css";
 
 const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
-  const [role, setRoleState] = useState("user"); // Default role set to 'user'
+  const [role, setRoleState] = useState("user"); 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -28,7 +28,7 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ username, password }),
-        credentials: "include", // Make sure cookies are included
+        credentials: "include", 
       });
   
       const data = await response.json();
@@ -36,7 +36,7 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
         alert("Login successful!");
         setIsLoggedIn(true);
         setError("");
-        setRole(data.user.role); // Set role after successful login
+        setRole(data.user.role); 
         navigate("/welcome");
       } else {
         setError(data.message || "Login failed. Please check your credentials.");
@@ -63,7 +63,7 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ username, password, role }),
-        credentials: "include", // Make sure cookies are included
+        credentials: "include", 
       });
 
       const data = await response.json();
@@ -156,13 +156,13 @@ const App = () => {
       try {
         const res = await fetch("http://localhost:5000/api/auth/protected", {
           method: "GET",
-          credentials: "include", // Make sure cookies are included
+          credentials: "include", 
         });
 
         const data = await res.json();
         if (res.ok && data.user) {
           setIsLoggedIn(true);
-          setRole(data.user.role); // Store role if the user is logged in
+          setRole(data.user.role); 
         }
       } catch (err) {
         setIsLoggedIn(false);

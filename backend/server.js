@@ -8,34 +8,28 @@ const authRoutes = require("./routes/auth");
 
 const app = express();
 
-// CORS setup
 const corsOptions = {
-  origin: 'http://localhost:3000', // Frontend URL
-  methods: 'GET,POST',
-  credentials: true, // Allow cookies to be sent
+  origin: "http://localhost:3000",
+  methods: "GET,POST",
+  credentials: true,
 };
 
-app.use(cors(corsOptions));  // Use CORS middleware
+app.use(cors(corsOptions));
 
-// Middleware setup
-app.use(express.json());  // Middleware to parse JSON bodies
-app.use(cookieParser());  // Middleware to parse cookies
+app.use(express.json());
+app.use(cookieParser());
 
-// MongoDB connection setup
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
-// Routes
-app.use("/api/auth", authRoutes);  // Use the authentication routes
+app.use("/api/auth", authRoutes);
 
-// Root route to confirm the server is running
 app.get("/", (req, res) => {
   res.send("Welcome to the backend!");
 });
 
-// Server setup
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
