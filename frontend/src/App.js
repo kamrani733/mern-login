@@ -14,7 +14,8 @@ const api = axios.create({
   withCredentials: true,
 });
 
-const Login = ({ setIsLoggedIn, setError, error }) => {
+const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
+  const [role, setRoleState] = useState("user"); // Default role set to 'user'
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -31,9 +32,11 @@ const Login = ({ setIsLoggedIn, setError, error }) => {
       alert("Login successful!");
       setIsLoggedIn(true);
       setError("");
+      setRole(res.data.user.role);  // Set role after successful login
       navigate("/welcome");
     } catch (err) {
-      setError("Login failed. Please check your credentials.");
+      const errorMsg = err.response?.data?.message || "Login failed. Please check your credentials.";
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -46,76 +49,77 @@ const Login = ({ setIsLoggedIn, setError, error }) => {
     }
     setLoading(true);
     try {
-      const res = await api.post("/register", { username, password });
+      await api.post("/register", { username, password, role });
       alert("Registration successful! Please log in.");
       navigate("/");
     } catch (err) {
-      setError("Registration failed. Please try again.");
+      const errorMsg = err.response?.data?.message || "Registration failed. Please try again.";
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div>
-      <div className="form-container">
-        <h1 className="form-title">Login</h1>
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className="input-field"
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="input-field"
-        />
-        {error && <p className="error-message">{error}</p>}
-        <div className="button-container">
-          <button
-            onClick={handleLogin}
-            className="button login-btn"
-            disabled={loading}
-          >
-            {loading ? "Logging in..." : "Login"}
-          </button>
-          <button
-            onClick={handleRegister}
-            className="button login-btn"
-            disabled={loading}
-          >
-            {loading ? "Registering..." : "Register"}
-          </button>
-        </div>
+    <div className="form-container">
+      <h1 className="form-title">Login</h1>
+      <input
+        type="text"
+        placeholder="Username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        className="input-field"
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        className="input-field"
+      />
+      <select
+        value={role}
+        onChange={(e) => setRoleState(e.target.value)}
+        className="input-field"
+      >
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+      </select>
+      {error && <p className="error-message">{error}</p>}
+      <div className="button-container">
+        <button
+          onClick={handleLogin}
+          className="button login-btn"
+          disabled={loading}
+        >
+          {loading ? "Logging in..." : "Login"}
+        </button>
+        <button
+          onClick={handleRegister}
+          className="button login-btn"
+          disabled={loading}
+        >
+          {loading ? "Registering..." : "Register"}
+        </button>
       </div>
     </div>
   );
 };
 
-const Welcome = ({ setIsLoggedIn }) => {
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    try {
-      await api.get("/logout");
-      setIsLoggedIn(false);
-      navigate("/");
-    } catch (err) {
-      console.error("Logout failed:", err);
-    }
-  };
-
+const Welcome = () => {
   return (
-    <div >
+    <div>
       <h1>Welcome!</h1>
-      <p>You are now logged in.</p>
-      <button onClick={handleLogout} className="  logout-btn">
-        Logout
-      </button>
+      <p>You are logged in as a User.</p>
+    </div>
+  );
+};
+
+const AdminPage = () => {
+  return (
+    <div>
+      <h1>Admin Dashboard</h1>
+      <p>Welcome to the Admin page.</p>
     </div>
   );
 };
@@ -123,6 +127,7 @@ const Welcome = ({ setIsLoggedIn }) => {
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [error, setError] = useState("");
+  const [role, setRole] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -131,6 +136,7 @@ const App = () => {
         const res = await api.get("/protected");
         if (res.data.user) {
           setIsLoggedIn(true);
+          setRole(res.data.user.role);  // Store role if the user is logged in
         }
       } catch (err) {
         setIsLoggedIn(false);
@@ -152,12 +158,13 @@ const App = () => {
           path="/"
           element={
             isLoggedIn ? (
-              <Navigate to="/welcome" />
+              <Navigate to={role === "admin" ? "/admin" : "/welcome"} />
             ) : (
               <Login
                 setIsLoggedIn={setIsLoggedIn}
                 setError={setError}
                 error={error}
+                setRole={setRole}
               />
             )
           }
@@ -165,8 +172,18 @@ const App = () => {
         <Route
           path="/welcome"
           element={
-            isLoggedIn ? (
-              <Welcome setIsLoggedIn={setIsLoggedIn} />
+            isLoggedIn && role === "user" ? (
+              <Welcome />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            isLoggedIn && role === "admin" ? (
+              <AdminPage />
             ) : (
               <Navigate to="/" />
             )

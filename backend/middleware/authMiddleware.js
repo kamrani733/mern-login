@@ -1,18 +1,20 @@
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken');
 
-module.exports = (req, res, next) => {
-  const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+const authenticate = (req, res, next) => {
+  const token = req.cookies.token;  // Read token from cookies
 
   if (!token) {
-    return res.status(401).json({ message: "No token provided, authorization denied" });
+    return res.status(401).json({ error: "No token provided" });
   }
 
   try {
+    // Verify the token and decode the payload
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
+    req.user = decoded;  // Attach user info to request object
+    next();  // Proceed to the next middleware/route handler
   } catch (err) {
-    console.error("Token verification error:", err);
-    res.status(401).json({ message: "Invalid or expired token" });
+    return res.status(401).json({ error: "Invalid token" });
   }
 };
+
+module.exports = authenticate;
