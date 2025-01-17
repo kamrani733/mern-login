@@ -5,6 +5,7 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loading2, setLoading2] = useState(false);
   const navigate = useNavigate();
   const [role, setRoleState] = useState("user");
 
@@ -48,7 +49,7 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
       setError("Please fill in all fields.");
       return;
     }
-    setLoading(true);
+    setLoading2(true);
     try {
       const response = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
@@ -69,7 +70,7 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
       console.error("Error:", err);
       setError("Registration failed. Please try again.");
     } finally {
-      setLoading(false);
+      setLoading2(false);
     }
   };
 
@@ -103,9 +104,9 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
         <button
           onClick={handleRegister}
           className="button login-btn"
-          disabled={loading}
+          disabled={loading2}
         >
-          {loading ? "Registering..." : "Register"}
+          {loading2 ? "Registering..." : "Register"}
         </button>
       </div>
     </div>
