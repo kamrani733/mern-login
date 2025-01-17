@@ -1,4 +1,4 @@
- import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -48,45 +48,47 @@ const App = () => {
   }
 
   return (
-    <Router>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            isLoggedIn ? (
-              <Navigate to={role === "admin" ? "/admin" : "/welcome"} />
-            ) : (
-              <Login
-                setIsLoggedIn={setIsLoggedIn}
-                setError={setError}
-                error={error}
-                setRole={setRole}
-              />
-            )
-          }
-        />
-        <Route
-          path="/welcome"
-          element={
-            isLoggedIn && role === "user" ? (
-              <Welcome role={role} handleLogout={handleLogout} />
-            ) : (
-              <Navigate to="/" />
-            )
-          }
-        />
-        <Route
-          path="/admin"
-          element={
-            isLoggedIn && role === "admin" ? (
-              <AdminPage handleLogout={handleLogout} />
-            ) : (
-              <Navigate to="/" />
-            )
-          }
-        />
-      </Routes>
-    </Router>
+    <div className="app-container">
+      <Router>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              isLoggedIn ? (
+                <Navigate to={role === "admin" ? "/admin" : "/welcome"} />
+              ) : (
+                <Login
+                  setIsLoggedIn={setIsLoggedIn}
+                  setError={setError}
+                  error={error}
+                  setRole={setRole}
+                />
+              )
+            }
+          />
+          <Route
+            path="/welcome"
+            element={
+              isLoggedIn && role === "user" ? (
+                <Welcome role={role} handleLogout={handleLogout} />
+              ) : (
+                <Navigate to="/" />
+              )
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              isLoggedIn && role === "admin" ? (
+                <AdminPage handleLogout={handleLogout} />
+              ) : (
+                <Navigate to="/" />
+              )
+            }
+          />
+        </Routes>
+      </Router>
+    </div>
   );
 };
 

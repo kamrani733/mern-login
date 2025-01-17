@@ -26,7 +26,6 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
 
       const data = await response.json();
       if (response.ok) {
-        alert("Login successful!");
         setIsLoggedIn(true);
         setError("");
         setRole(data.user.role);
@@ -62,7 +61,6 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
 
       const data = await response.json();
       if (response.ok) {
-        alert("Registration successful! Please log in.");
         navigate("/");
       } else {
         setError(data.message || "Registration failed. Please try again.");
