@@ -11,39 +11,39 @@ const router = express.Router();
  * @route POST /login
  * @desc Login an existing user
  */
-router.post('/login', async (req, res) => {
+router.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
   try {
     const user = await User.findOne({ username });
 
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ error: "User not found" });
     }
 
     if (user.password !== password) {
-      return res.status(401).json({ error: 'Invalid password' });
+      return res.status(401).json({ error: "Invalid password" });
     }
 
     const token = jwt.sign(
       { id: user._id, username: user.username, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: "1h" }
     );
 
-    res.cookie('token', token, {
+    res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
-      maxAge: 3600000
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+      maxAge: 3600000,
     });
 
     return res.json({
-      message: 'Login successful',
+      message: "Login successful",
       user: { username: user.username, role: user.role },
     });
   } catch (error) {
-    return res.status(500).json({ error: 'Server error' });
+    return res.status(500).json({ error: "Server error" });
   }
 });
 
@@ -85,17 +85,21 @@ router.post("/register", async (req, res) => {
  */
 router.get("/protected", authenticate, (req, res) => {
   res.status(200).json({
-    message: "Protected route accessed",
-    user: req.user,
+    message: "You have access to this protected route",
+    user: req.user, // Access the authenticated user's information
   });
 });
 
 /**
- * @route GET /logout
+ * @route POST /logout
  * @desc Logout a user by clearing the token
  */
-router.get("/logout", (req, res) => {
-  res.clearCookie("token");
+router.post("/logout", (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+  });
   res.status(200).json({ message: "Logged out successfully" });
 });
 

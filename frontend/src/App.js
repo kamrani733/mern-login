@@ -6,9 +6,9 @@ import {
   Navigate,
 } from "react-router-dom";
 import "./App.css";
-import Login from "./Login";
-import Welcome from "./Welcome";
-import AdminPage from "./AdminPage";
+import Login from "./components/Login";
+import Welcome from "./components/Welcome";
+import AdminPage from "./components/AdminPage";
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -16,9 +16,24 @@ const App = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setRole("user");
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/logout", {
+        method: "POST",
+        credentials: "include",  
+      });
+  
+      if (response.ok) {
+        // Clear frontend state
+        setIsLoggedIn(false);
+        setRole("user");
+        alert("Logged out successfully!");
+      } else {
+        console.error("Logout failed:", response.statusText);
+      }
+    } catch (err) {
+      console.error("Error during logout:", err);
+    }
   };
 
   useEffect(() => {
