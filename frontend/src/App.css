@@ -56,12 +56,18 @@ body {
 }
 
 .login-btn {
-  background-color: #564caf;
+  background-color: #45a049;
   color: white;
 }
-
+.register-btn{
+  background-color: #6720eb;
+  color: white;
+}
+.register-btn:hover {
+  background-color: #410ea1;
+}
 .login-btn:hover {
-  background-color: #45a049;
+  background-color: #1c491e;
 }
 
 .logout-btn {

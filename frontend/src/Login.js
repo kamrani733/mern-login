@@ -96,7 +96,7 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
       <div className="button-container">
         <button
           onClick={handleLogin}
-          className="button login-btn"
+          className="button register-btn"
           disabled={loading}
         >
           {loading ? "Logging in..." : "Login"}
