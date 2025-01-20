@@ -30,7 +30,7 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
         setIsLoggedIn(true);
         setError("");
         setRole(data.user.role);
-        navigate("/welcome");
+        navigate("/User");
       } else {
         setError(
           data.message || "Login failed. Please check your credentials."

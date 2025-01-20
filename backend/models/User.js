@@ -13,10 +13,23 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["user", "admin"],  
-    default: "user",       
+    enum: ["user", "admin"],
+    default: "user",
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  bio: {
+    type: String,
+    default: "",
+  },
+  profilePicture: {
+    type: String,
+    default: "default-profile.png",
   },
 });
- 
+
 
 module.exports = mongoose.model("Admin", userSchema);

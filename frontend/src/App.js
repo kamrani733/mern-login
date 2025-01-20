@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import "./App.css";
 import Login from "./components/Login";
-import Welcome from "./components/Welcome";
+import User from "./components/User";
 import AdminPage from "./components/AdminPage";
 
 const App = () => {
@@ -70,7 +70,7 @@ const App = () => {
             path="/"
             element={
               isLoggedIn ? (
-                <Navigate to={role === "admin" ? "/admin" : "/welcome"} />
+                <Navigate to={role === "admin" ? "/admin" : "/User"} />
               ) : (
                 <Login
                   setIsLoggedIn={setIsLoggedIn}
@@ -82,10 +82,10 @@ const App = () => {
             }
           />
           <Route
-            path="/welcome"
+            path="/User"
             element={
               isLoggedIn && role === "user" ? (
-                <Welcome role={role} handleLogout={handleLogout} />
+                <User role={role} handleLogout={handleLogout} />
               ) : (
                 <Navigate to="/" />
               )
