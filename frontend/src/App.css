@@ -1,6 +1,18 @@
 /* App.css */
+:root {
+  --primary-color: #007bff;
+  --primary-hover-color: #0056b3;
+  --secondary-color: #6c757d;
+  --secondary-hover-color: #5a6268;
+  --error-color: #dc3545;
+  --background-color: #f9f9f9;
+  --text-color: #333;
+  --text-light-color: #555;
+  --white-color: #fff;
+}
+
 body {
-  font-family: sans-serif; /* Apply the font to the entire app */
+  font-family: sans-serif;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -53,26 +65,27 @@ body {
   font-size: 16px;
   font-weight: 500;
   transition: background-color 0.3s ease;
+  color: var(--white-color);
 }
 
 .login-btn {
   background-color: #45a049;
-  color: white;
 }
-.register-btn{
-  background-color: #6720eb;
-  color: white;
-}
-.register-btn:hover {
-  background-color: #410ea1;
-}
+
 .login-btn:hover {
   background-color: #1c491e;
 }
 
+.register-btn {
+  background-color: #6720eb;
+}
+
+.register-btn:hover {
+  background-color: #410ea1;
+}
+
 .logout-btn {
   background-color: #f44336;
-  color: white;
 }
 
 .logout-btn:hover {
@@ -80,103 +93,9 @@ body {
 }
 
 .error-message {
-  color: red;
+  color: var(--error-color);
   margin-top: 10px;
   font-size: 14px;
-}
-
-/* Profile.css */
-
-/* Container */
-.profile-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  max-width: 600px;
-  margin: 0 auto;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  background-color: #f9f9f9;
-}
-
-/* Header */
-.profile-container h1 {
-  font-size: 2rem;
-  color: #333;
-  margin-bottom: 20px;
-}
-
-/* Profile Info */
-.profile-info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.profile-info p {
-  font-size: 1.2rem;
-  margin: 5px 0;
-}
-
-/* Profile Image */
-.profile-info img {
-  border-radius: 50%;
-  width: 150px;
-  height: 150px;
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
-
-/* Form */
-.form-container {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.form-container label {
-  font-size: 1.1rem;
-  margin-bottom: 5px;
-  color: #333;
-}
-
-.form-container input,
-.form-container textarea {
-  padding: 10px;
-  font-size: 1rem;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  width: 100%;
-}
-
-.form-container button {
-  background-color: #4CAF50;
-  color: white;
-  padding: 10px 20px;
-  font-size: 1.1rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.form-container button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.form-container p {
-  color: red;
-  font-size: 0.9rem;
-}
-
-/* Error Message */
-.error-message {
-  color: red;
-  font-size: 1rem;
-  margin-top: 10px;
 }
 
 /* Profile.css */
@@ -185,7 +104,7 @@ body {
   margin: 0 auto;
   padding: 20px;
   font-family: Arial, sans-serif;
-  background-color: #f9f9f9;
+  background-color: var(--background-color);
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -193,7 +112,7 @@ body {
 .profile-info {
   text-align: center;
   padding: 20px;
-  background-color: #fff;
+  background-color: var(--white-color);
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -201,12 +120,12 @@ body {
 .profile-info h1 {
   font-size: 2rem;
   margin-bottom: 20px;
-  color: #333;
+  color: var(--text-color);
 }
 
 .profile-info p {
   font-size: 1.1rem;
-  color: #555;
+  color: var(--text-light-color);
   margin: 10px 0;
 }
 
@@ -216,15 +135,15 @@ body {
   border-radius: 50%;
   object-fit: cover;
   margin-top: 20px;
-  border: 3px solid #007bff;
+  border: 3px solid var(--primary-color);
 }
 
 .profile-info button {
   margin-top: 20px;
   padding: 10px 20px;
   font-size: 1rem;
-  color: #fff;
-  background-color: #007bff;
+  color: var(--white-color);
+  background-color: var(--primary-color);
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -232,13 +151,13 @@ body {
 }
 
 .profile-info button:hover {
-  background-color: #0056b3;
+  background-color: var(--primary-hover-color);
 }
 
 .form-container {
   margin-top: 20px;
   padding: 20px;
-  background-color: #fff;
+  background-color: var(--white-color);
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -246,13 +165,13 @@ body {
 .form-container h1 {
   font-size: 1.5rem;
   margin-bottom: 20px;
-  color: #333;
+  color: var(--text-color);
 }
 
 .form-container label {
   display: block;
   font-size: 1rem;
-  color: #555;
+  color: var(--text-light-color);
   margin-bottom: 5px;
 }
 
@@ -279,8 +198,8 @@ body {
   margin-right: 10px;
   padding: 10px 20px;
   font-size: 1rem;
-  color: #fff;
-  background-color: #007bff;
+  color: var(--white-color);
+  background-color: var(--primary-color);
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -288,19 +207,35 @@ body {
 }
 
 .form-container button[type="button"] {
-  background-color: #6c757d;
+  background-color: var(--secondary-color);
 }
 
 .form-container button:hover {
-  background-color: #0056b3;
+  background-color: var(--primary-hover-color);
 }
 
 .form-container button[type="button"]:hover {
-  background-color: #5a6268;
+  background-color: var(--secondary-hover-color);
 }
 
 .error-message {
-  color: #dc3545;
+  color: var(--error-color);
   font-size: 0.9rem;
   margin-top: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .profile-container {
+    padding: 10px;
+  }
+
+  .profile-info img {
+    width: 100px;
+    height: 100px;
+  }
+
+  .form-container {
+    padding: 10px;
+  }
 }
