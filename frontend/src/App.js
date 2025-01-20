@@ -24,7 +24,6 @@ const App = () => {
       });
   
       if (response.ok) {
-        // Clear frontend state
         setIsLoggedIn(false);
         setRole("user");
         alert("Logged out successfully!");
@@ -35,6 +34,7 @@ const App = () => {
       console.error("Error during logout:", err);
     }
   };
+  
 
   useEffect(() => {
     const checkAuth = async () => {

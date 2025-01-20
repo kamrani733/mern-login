@@ -86,7 +86,7 @@ router.post("/register", async (req, res) => {
 router.get("/protected", authenticate, (req, res) => {
   res.status(200).json({
     message: "You have access to this protected route",
-    user: req.user, // Access the authenticated user's information
+    user: req.user,
   });
 });
 
@@ -95,13 +95,12 @@ router.get("/protected", authenticate, (req, res) => {
  * @desc Logout a user by clearing the token
  */
 router.post("/logout", (req, res) => {
-  res.clearCookie("token", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
-  });
+  console.log("Logout route hit");
+  res.clearCookie("token");
   res.status(200).json({ message: "Logged out successfully" });
 });
+
+
 
 /**
  * @route GET /users
@@ -109,13 +108,13 @@ router.post("/logout", (req, res) => {
  */
 router.get("/users", authenticate, async (req, res) => {
   try {
-    // Check if the user is an admin
+   
     if (req.user.role !== "admin") {
       return res.status(403).json({ error: "Access denied. Admins only." });
     }
 
-    // Fetch all users from the database
-    const users = await User.find({}, { password: 0 }); // Exclude passwords from the response
+   
+    const users = await User.find({}, { password: 0 });
 
     res.status(200).json({ users });
   } catch (err) {
