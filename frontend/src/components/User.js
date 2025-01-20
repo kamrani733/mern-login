@@ -5,6 +5,7 @@ const Profile = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
   const [form, setForm] = useState({
     email: "",
     bio: "",
@@ -14,9 +15,12 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const { data } = await axios.get("/api/user/profile", {
-          withCredentials: true,
-        });
+        const { data } = await axios.get(
+          "http://localhost:5000/api/auth/profile",
+          {
+            withCredentials: true,
+          }
+        );
         if (data) {
           setProfile(data);
           setForm({
@@ -45,26 +49,36 @@ const Profile = () => {
     e.preventDefault();
     setLoading(true);
     setError("");
-
+  
     const formData = new FormData();
     formData.append("email", form.email);
     formData.append("bio", form.bio);
     if (form.profilePicture) {
       formData.append("profilePicture", form.profilePicture);
     }
-
+  
+     for (let [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+  
     try {
-      const { data } = await axios.put("/api/user/profile", formData, {
+      const { data } = await axios.put("http://localhost:5000/api/auth/profile", formData, {
         headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
       setProfile(data.user);
+      setIsEditing(false);
       alert("Profile updated successfully");
     } catch (err) {
-      setError("Error updating profile");
+      console.error("Error updating profile:", err.response ? err.response.data : err.message);
+      setError("Error updating profile: " + (err.response ? err.response.data.message : err.message));
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleEditClick = () => {
+    setIsEditing(true);
   };
 
   if (loading) return <div>Loading...</div>;
@@ -80,10 +94,15 @@ const Profile = () => {
             src={profile.profilePicture || "https://via.placeholder.com/150"}
             alt="Profile"
           />
+          {!isEditing && (
+            <button onClick={handleEditClick}>Edit Profile</button>
+          )}
         </div>
-      ) : (
+      ) : null}
+
+      {isEditing && (
         <form className="form-container" onSubmit={handleSubmit}>
-          <h1>Complete Your Profile</h1>
+          <h1>Edit Your Profile</h1>
           <div>
             <label>Email:</label>
             <input
@@ -112,6 +131,9 @@ const Profile = () => {
           </div>
           <button type="submit" disabled={loading}>
             {loading ? "Saving..." : "Save"}
+          </button>
+          <button type="button" onClick={() => setIsEditing(false)}>
+            Cancel
           </button>
           {error && <p className="error-message">{error}</p>}
         </form>

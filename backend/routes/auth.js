@@ -2,10 +2,21 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const authenticate = require("../middleware/authMiddleware");
-const cookieParser = require("cookie-parser");
-const cors = require("cors");
+const multer = require("multer");
+const path = require("path");
 
 const router = express.Router();
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage });
 
 /**
  * @route POST /login
@@ -100,46 +111,28 @@ router.post("/logout", (req, res) => {
   res.status(200).json({ message: "Logged out successfully" });
 });
 
-
-
 /**
  * @route GET /users
  * @desc Get a list of all users (requires authentication and admin role)
  */
 router.get("/users", authenticate, async (req, res) => {
   try {
-   
     if (req.user.role !== "admin") {
       return res.status(403).json({ error: "Access denied. Admins only." });
     }
 
-   
     const users = await User.find({}, { password: 0 });
-
     res.status(200).json({ users });
   } catch (err) {
     res.status(500).json({ error: "Server error" });
   }
 });
-const multer = require("multer");
-const path = require("path");
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
-});
-
-const upload = multer({ storage });
 
 /**
- * @route GET /api/user/profile
+ * @route GET /profile
  * @desc Get user profile
  */
-router.get("/user/profile", authenticate, async (req, res) => {
+router.get("/profile", authenticate, async (req, res) => {
   try {
     const user = await User.findById(req.user.id, { password: 0 });
     if (!user) {
@@ -152,39 +145,35 @@ router.get("/user/profile", authenticate, async (req, res) => {
 });
 
 /**
- * @route PUT /api/user/profile
+ * @route PUT /profile
  * @desc Update user profile
  */
-router.put("/user/profile", authenticate, upload.single("profilePicture"), async (req, res) => {
-  const { email, bio } = req.body;
-  const profilePicture = req.file ? req.file.filename : null;
+router.put(
+  "/profile",
+  authenticate,
+  upload.single("profilePicture"),
+  async (req, res) => {
+    const { email, bio } = req.body;
+    const profilePicture = req.file;
 
-  try {
-    const updates = { email, bio };
-    if (profilePicture) {
-      updates.profilePicture = profilePicture;
+    try {
+      const user = await User.findById(req.user.id);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      user.email = email || user.email;
+      user.bio = bio || user.bio;
+      if (profilePicture) {
+        user.profilePicture = profilePicture.path;
+      }
+
+      await user.save();
+      res.status(200).json({ message: "Profile updated successfully", user });
+    } catch (err) {
+      res.status(500).json({ error: "Server error" });
     }
-
-    const user = await User.findByIdAndUpdate(req.user.id, updates, { new: true });
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    res.status(200).json({ message: "Profile updated successfully", user });
-  } catch (err) {
-    res.status(500).json({ error: "Server error" });
   }
-});
-router.get("/profile", authenticate, async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id, { password: 0 });
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-    res.json(user);
-  } catch (err) {
-    res.status(500).json({ error: "Server error" });
-  }
-});
+);
 
 module.exports = router;
