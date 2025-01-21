@@ -9,9 +9,11 @@ import Login from "./components/Login";
 import User from "./components/User";
 import AdminPage from "./components/AdminPage";
 import EditProfile from "./components/EditProfile";
-import Users from "./components/Users"; // Import the Users component
+import Users from "./components/Users";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
+import TicketForm from "./components/TicketForm";
+import TicketList from "./components/TicketList";
 import "./App.css";
 
 const App = () => {
@@ -63,7 +65,7 @@ const App = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen   ">
+      <div className="flex items-center justify-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-yellow"></div>
       </div>
     );
@@ -72,9 +74,9 @@ const App = () => {
   return (
     <Router>
       {isLoggedIn && <Navbar role={role} handleLogout={handleLogout} />}
-      <div className="flex    min-h-screen">
+      <div className="flex min-h-screen">
         {isLoggedIn && <Sidebar role={role} />}
-        <div className="flex-1 p-6 ">
+        <div className="flex-1 p-6">
           <Routes>
             <Route
               path="/"
@@ -126,6 +128,20 @@ const App = () => {
               element={
                 isLoggedIn && role === "admin" ? (
                   <Users role={role} handleLogout={handleLogout} />
+                ) : (
+                  <Navigate to="/" />
+                )
+              }
+            />
+            <Route
+              path="/tickets"
+              element={
+                isLoggedIn ? (
+                  role === "admin" ? (
+                    <TicketList />
+                  ) : (
+                    <TicketForm />
+                  )
                 ) : (
                   <Navigate to="/" />
                 )

@@ -9,7 +9,7 @@ const Sidebar = ({ role }) => {
         <li>
           <Link
             to={role === "admin" ? "/admin" : "/User"}
-            className="block py-2 px-4 hover:  rounded transition duration-300"
+            className="block py-2 px-4 hover:bg-secondary-blue rounded transition duration-300"
           >
             Home
           </Link>
@@ -17,7 +17,7 @@ const Sidebar = ({ role }) => {
         <li>
           <Link
             to="/edit-profile"
-            className="block py-2 px-4 hover:  rounded transition duration-300"
+            className="block py-2 px-4 hover:bg-secondary-blue rounded transition duration-300"
           >
             Edit Profile
           </Link>
@@ -32,6 +32,14 @@ const Sidebar = ({ role }) => {
             </Link>
           </li>
         )}
+        <li>
+          <Link
+            to="/tickets"
+            className="block py-2 px-4 hover:bg-secondary-blue rounded transition duration-300"
+          >
+            Tickets
+          </Link>
+        </li>
       </ul>
     </div>
   );
