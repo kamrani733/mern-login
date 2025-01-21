@@ -34,6 +34,30 @@ const Users = ({ role, handleLogout }) => {
     fetchUsers();
   }, [role, navigate]);
 
+  const toggleRole = async (userId, currentRole) => {
+    try {
+      const newRole = currentRole === "admin" ? "user" : "admin";
+
+      const { data } = await axios.put(
+        `http://localhost:5000/api/auth/users/${userId}/role`,
+        { role: newRole },
+        { withCredentials: true }
+      );
+
+      // Update the user's role in the local state
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user._id === userId ? { ...user, role: newRole } : user
+        )
+      );
+
+      alert(`Role updated to ${newRole}`);
+    } catch (err) {
+      console.error("Error updating role:", err);
+      setError("Failed to update role");
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -52,7 +76,7 @@ const Users = ({ role, handleLogout }) => {
 
   return (
     <div className="min-h-screen p-6">
-      <div className="p-8 rounded-lg shadow-lg  ">
+      <div className="p-8 rounded-lg shadow-lg ">
         <h1 className="text-3xl font-bold text-primary-yellow mb-6">
           All Users
         </h1>
@@ -81,6 +105,12 @@ const Users = ({ role, handleLogout }) => {
                   </div>
                 </div>
                 <p className="text-sm">{user.bio || "No bio available."}</p>
+                <button
+                  onClick={() => toggleRole(user._id, user.role)}
+                  className="bg-primary-yellow hover:bg-secondary-yellow text-white font-bold py-1 px-2 rounded text-sm transition duration-300"
+                >
+                  Toggle Role
+                </button>
               </div>
             </div>
           ))}

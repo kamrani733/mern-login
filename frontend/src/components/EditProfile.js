@@ -96,7 +96,7 @@ const EditProfile = ({ handleLogout }) => {
   }
 
   return (
-    <div className="min-h-screen  flex items-center justify-center p-6">
+    <div className="  flex items-center justify-center p-6">
       <div className=" p-8 rounded-lg shadow-lg w-full max-w-3xl">
         <h1 className="text-3xl font-bold text-primary-yellow mb-6">
           Edit Profile

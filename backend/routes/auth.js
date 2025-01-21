@@ -184,5 +184,47 @@ router.get("/users", authenticate, async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: "Server error" });
   }
+}); 
+router.put("/users/:id/role", authenticate, async (req, res) => {
+  try {
+    console.log("Received request to update user role:", req.params.id, req.body);
+
+    // Check if the requester is an admin
+    if (req.user.role !== "admin") {
+      console.log("Access denied. Requester is not an admin.");
+      return res.status(403).json({ error: "Access denied. Admins only." });
+    }
+
+    const { id } = req.params;
+    const { role } = req.body;
+
+    console.log("Updating role for user ID:", id, "New role:", role);
+
+    // Validate the role
+    if (!["admin", "user"].includes(role)) {
+      console.log("Invalid role provided:", role);
+      return res.status(400).json({ error: "Invalid role" });
+    }
+
+    // Update the user's role
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { role },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      console.log("User not found with ID:", id);
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    console.log("Role updated successfully for user:", updatedUser.email, "New role:", updatedUser.role);
+
+    res.status(200).json({ user: updatedUser });
+  } catch (err) {
+    console.error("Error updating role:", err);
+    res.status(500).json({ error: "Server error" });
+  }
 });
+
 module.exports = router;  
