@@ -4,8 +4,10 @@ const User = require("../models/User");
 const authenticate = require("../middleware/authMiddleware");
 const multer = require("multer");
 const path = require("path");
+const cloudinary = require("../cloudinary");
 
 const router = express.Router();
+
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -65,14 +67,14 @@ router.post("/login", async (req, res) => {
 router.post("/register", async (req, res) => {
   const { email, password, role } = req.body;
 
-  if (!email || !password || !role ) {
+  if (!email || !password || !role) {
     return res.status(400).json({ error: "Please provide all fields" });
   }
 
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ error: "email already exists" });
+      return res.status(400).json({ error: "Email already exists" });
     }
 
     const newUser = new User({ email, password, role });
@@ -142,31 +144,30 @@ router.get("/profile", authenticate, async (req, res) => {
  * @route PUT /profile
  * @desc Update user profile
  */
-router.put(
-  "/profile",
-  authenticate,
-  upload.single("profilePicture"),
-  async (req, res) => {
+router.put("/profile", authenticate, upload.single("profilePicture"), async (req, res) => {
+  try {
     const { bio } = req.body;
-    const profilePicture = req.file;
+    const userId = req.user.id;
 
-    try {
-      const user = await User.findById(req.user.id);
-      if (!user) {
-        return res.status(404).json({ error: "User not found" });
-      }
-
-      user.bio = bio || user.bio;
-      if (profilePicture) {
-        user.profilePicture = profilePicture.path;
-      }
-
-      await user.save();
-      res.status(200).json({ message: "Profile updated successfully", user });
-    } catch (err) {
-      res.status(500).json({ error: "Server error" });
+    let profilePictureUrl = null;
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "profile-pictures",
+      });
+      profilePictureUrl = result.secure_url;
     }
-  }
-);
 
-module.exports = router;
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { bio, profilePicture: profilePictureUrl },
+      { new: true }
+    );
+
+    res.status(200).json({ user: updatedUser });
+  } catch (err) {
+    console.error("Error updating profile:", err);
+    res.status(500).json({ message: "Error updating profile" });
+  }
+});
+
+module.exports = router;  

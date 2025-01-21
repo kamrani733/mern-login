@@ -30,7 +30,8 @@ const Profile = ({ handleLogout }) => {
           });
         }
       } catch (err) {
-        setProfile(null);
+        setError("Failed to fetch profile data");
+        console.error("Error fetching profile:", err);
       }
     };
     fetchProfile();
@@ -42,7 +43,9 @@ const Profile = ({ handleLogout }) => {
   };
 
   const handleFileChange = (e) => {
-    setForm((prev) => ({ ...prev, profilePicture: e.target.files[0] }));
+    if (e.target.files && e.target.files[0]) {
+      setForm((prev) => ({ ...prev, profilePicture: e.target.files[0] }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -54,10 +57,6 @@ const Profile = ({ handleLogout }) => {
     formData.append("bio", form.bio);
     if (form.profilePicture) {
       formData.append("profilePicture", form.profilePicture);
-    }
-
-    for (let [key, value] of formData.entries()) {
-      console.log(key, value);
     }
 
     try {
@@ -93,58 +92,61 @@ const Profile = ({ handleLogout }) => {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <>
-      <div className="profile-container">
-        {profile ? (
-          <div className="profile-info">
-            <h1>Profile</h1>
-            <p>Email: {profile.email}</p>
-            <p>Bio: {profile.bio}</p>
+    <div className="profile-container">
+      {profile ? (
+        <div className="profile-info">
+          <h1>Profile</h1>
+          <p>Email: {profile.email}</p>
+          <p>Bio: {profile.bio}</p>
+          {profile.profilePicture && (
             <img
               src={profile.profilePicture}
               alt="Profile"
+              style={{ width: "100px", height: "100px", borderRadius: "50%" }}
             />
-            {!isEditing && (
-              <button onClick={handleEditClick}>Edit Profile</button>
-            )}
-          </div>
-        ) : null}
+          )}
+          {!isEditing && (
+            <button onClick={handleEditClick}>Edit Profile</button>
+          )}
+        </div>
+      ) : (
+        <p>No profile data found.</p>
+      )}
 
-        {isEditing && (
-          <form className="form-container" onSubmit={handleSubmit}>
-            <h1>Edit Your Profile</h1>
-            <div>
-              <label>Bio:</label>
-              <textarea
-                name="bio"
-                value={form.bio}
-                onChange={handleInputChange}
-              ></textarea>
-            </div>
-            <div>
-              <label>Profile Picture:</label>
-              <input
-                type="file"
-                name="profilePicture"
-                onChange={handleFileChange}
-              />
-            </div>
-            <div className="buttons">
-              <button type="submit" disabled={loading}>
-                {loading ? "Saving..." : "Save"}
-              </button>
-              <button type="button" onClick={() => setIsEditing(false)}>
-                Cancel
-              </button>
-            </div>
-            {error && <p className="error-message">{error}</p>}
-          </form>
-        )}
-        <button className="button logout-btn" onClick={handleLogout}>
-          Logout
-        </button>
-      </div>
-    </>
+      {isEditing && (
+        <form className="form-container" onSubmit={handleSubmit}>
+          <h1>Edit Your Profile</h1>
+          <div>
+            <label>Bio:</label>
+            <textarea
+              name="bio"
+              value={form.bio}
+              onChange={handleInputChange}
+            ></textarea>
+          </div>
+          <div>
+            <label>Profile Picture:</label>
+            <input
+              type="file"
+              name="profilePicture"
+              onChange={handleFileChange}
+            />
+          </div>
+          <div className="buttons">
+            <button type="submit" disabled={loading}>
+              {loading ? "Saving..." : "Save"}
+            </button>
+            <button type="button" onClick={() => setIsEditing(false)}>
+              Cancel
+            </button>
+          </div>
+          {error && <p className="error-message">{error}</p>}
+        </form>
+      )}
+      <button className="button logout-btn" onClick={handleLogout}>
+        Logout
+      </button>
+    </div>
   );
 };
 
