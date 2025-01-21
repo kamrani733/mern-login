@@ -9,6 +9,7 @@ import "./App.css";
 import Login from "./components/Login";
 import User from "./components/User";
 import AdminPage from "./components/AdminPage";
+import EditProfile from "./components/EditProfile";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { auto } from "@cloudinary/url-gen/actions/resize";
 import { autoGravity } from "@cloudinary/url-gen/qualifiers/gravity";
@@ -18,9 +19,9 @@ const cld = new Cloudinary({ cloud: { cloudName: "dob3u0cre" } });
 
 const img = cld
   .image("cld-sample-5")
-  .format("auto")  
+  .format("auto")
   .quality("auto")
-  .resize(auto().gravity(autoGravity()).width(500).height(500));  
+  .resize(auto().gravity(autoGravity()).width(500).height(500));
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -111,6 +112,10 @@ const App = () => {
                 <Navigate to="/" />
               )
             }
+          />
+          <Route
+            path="/edit-profile"
+            element={<EditProfile handleLogout={handleLogout} />}
           />
         </Routes>
       </Router>
