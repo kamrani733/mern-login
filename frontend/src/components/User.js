@@ -51,7 +51,6 @@ const Profile = ({ handleLogout }) => {
     setError("");
 
     const formData = new FormData();
-    formData.append("email", form.email);
     formData.append("bio", form.bio);
     if (form.profilePicture) {
       formData.append("profilePicture", form.profilePicture);
@@ -114,16 +113,6 @@ const Profile = ({ handleLogout }) => {
         {isEditing && (
           <form className="form-container" onSubmit={handleSubmit}>
             <h1>Edit Your Profile</h1>
-            <div>
-              <label>Email:</label>
-              <input
-                type="email"
-                name="email"
-                value={form.email}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
             <div>
               <label>Bio:</label>
               <textarea

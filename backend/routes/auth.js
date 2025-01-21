@@ -23,10 +23,10 @@ const upload = multer({ storage });
  * @desc Login an existing user
  */
 router.post("/login", async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
@@ -37,7 +37,7 @@ router.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id, username: user.username, role: user.role },
+      { id: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -51,7 +51,7 @@ router.post("/login", async (req, res) => {
 
     return res.json({
       message: "Login successful",
-      user: { username: user.username, role: user.role },
+      user: { email: user.email, role: user.role },
     });
   } catch (error) {
     return res.status(500).json({ error: "Server error" });
@@ -63,19 +63,19 @@ router.post("/login", async (req, res) => {
  * @desc Register a new user
  */
 router.post("/register", async (req, res) => {
-  const { username, password, role } = req.body;
+  const { email, password, role } = req.body;
 
-  if (!username || !password || !role ) {
+  if (!email || !password || !role ) {
     return res.status(400).json({ error: "Please provide all fields" });
   }
 
   try {
-    const existingUser = await User.findOne({ username });
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ error: "Username already exists" });
+      return res.status(400).json({ error: "email already exists" });
     }
 
-    const newUser = new User({ username, password, role });
+    const newUser = new User({ email, password, role });
     await newUser.save();
 
     res.status(201).json({ message: "Registration successful" });
@@ -101,7 +101,6 @@ router.get("/protected", authenticate, (req, res) => {
  * @desc Logout a user by clearing the token
  */
 router.post("/logout", (req, res) => {
-  console.log("Logout route hit");
   res.clearCookie("token");
   res.status(200).json({ message: "Logged out successfully" });
 });
@@ -148,7 +147,7 @@ router.put(
   authenticate,
   upload.single("profilePicture"),
   async (req, res) => {
-    const { email, bio } = req.body;
+    const { bio } = req.body;
     const profilePicture = req.file;
 
     try {
@@ -157,7 +156,6 @@ router.put(
         return res.status(404).json({ error: "User not found" });
       }
 
-      user.email = email || user.email;
       user.bio = bio || user.bio;
       if (profilePicture) {
         user.profilePicture = profilePicture.path;
