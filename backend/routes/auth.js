@@ -169,5 +169,20 @@ router.put("/profile", authenticate, upload.single("profilePicture"), async (req
     res.status(500).json({ message: "Error updating profile" });
   }
 });
+/**
+ * @route GET /users
+ * @desc Get a list of all users (requires authentication and admin role)
+ */
+router.get("/users", authenticate, async (req, res) => {
+  try {
+    if (req.user.role !== "admin") {
+      return res.status(403).json({ error: "Access denied. Admins only." });
+    }
 
+    const users = await User.find({}, { password: 0 }); // Exclude passwords
+    res.status(200).json({ users });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
 module.exports = router;  
