@@ -86,8 +86,12 @@ body {
 
 .logout-btn {
   background-color: #f44336;
+  margin-top: 20px;
 }
-
+.buttons {
+  display: flex;
+  align-items: center;
+}
 .logout-btn:hover {
   background-color: #e53935;
 }
@@ -98,23 +102,14 @@ body {
   font-size: 14px;
 }
 
-/* Profile.css */
-.profile-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: Arial, sans-serif;
-  background-color: var(--background-color);
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
+ 
 
 .profile-info {
+  
   text-align: center;
   padding: 20px;
   background-color: var(--white-color);
   border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .profile-info h1 {

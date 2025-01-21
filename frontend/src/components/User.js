@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const Profile = ({handleLogout}) => {
+const Profile = ({ handleLogout }) => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -102,7 +102,7 @@ const Profile = ({handleLogout}) => {
             <p>Email: {profile.email}</p>
             <p>Bio: {profile.bio}</p>
             <img
-              src={profile.profilePicture || "https://via.placeholder.com/150"}
+              src={profile.profilePicture}
               alt="Profile"
             />
             {!isEditing && (
@@ -140,18 +140,20 @@ const Profile = ({handleLogout}) => {
                 onChange={handleFileChange}
               />
             </div>
-            <button type="submit" disabled={loading}>
-              {loading ? "Saving..." : "Save"}
-            </button>
-            <button type="button" onClick={() => setIsEditing(false)}>
-              Cancel
-            </button>
+            <div className="buttons">
+              <button type="submit" disabled={loading}>
+                {loading ? "Saving..." : "Save"}
+              </button>
+              <button type="button" onClick={() => setIsEditing(false)}>
+                Cancel
+              </button>
+            </div>
             {error && <p className="error-message">{error}</p>}
           </form>
         )}
-      <button className="button logout-btn" onClick={handleLogout}>
-        Logout
-      </button>
+        <button className="button logout-btn" onClick={handleLogout}>
+          Logout
+        </button>
       </div>
     </>
   );

@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [loading2, setLoading2] = useState(false);
   const navigate = useNavigate();
@@ -47,7 +46,7 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
 
   const handleRegister = async () => {
     console.log("Register button clicked");
-    if (!username || !password || !email) {
+    if (!username || !password  ) {
       setError("Please fill in all fields.");
       return;
     }
@@ -59,7 +58,7 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, password, role: role, email }),
+        body: JSON.stringify({ username, password, role: role }),
         credentials: "include",
       });
 
@@ -97,13 +96,7 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
         onChange={(e) => setPassword(e.target.value)}
         className="input-field"
       />
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="input-field"
-      />
+     
 
       {error && <p className="error-message">{error}</p>}
       <div className="button-container">

@@ -63,9 +63,9 @@ router.post("/login", async (req, res) => {
  * @desc Register a new user
  */
 router.post("/register", async (req, res) => {
-  const { username, password, role, email } = req.body;
+  const { username, password, role } = req.body;
 
-  if (!username || !password || !role || !email) {
+  if (!username || !password || !role ) {
     return res.status(400).json({ error: "Please provide all fields" });
   }
 
@@ -75,7 +75,7 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ error: "Username already exists" });
     }
 
-    const newUser = new User({ username, password, role, email });
+    const newUser = new User({ username, password, role });
     await newUser.save();
 
     res.status(201).json({ message: "Registration successful" });
