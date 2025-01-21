@@ -2,15 +2,20 @@ import { useState } from "react";
 import axios from "axios";
 
 const Register = () => {
-    const [formData, setFormData] = useState({ username: "", password: "" });
+    const [formData, setFormData] = useState({ username: "", password: "", role: "user" });
+    const [error, setError] = useState("");
+    console.log("clicked submit")
 
     const handleSubmit = async (e) => {
+        console.log("clicked submit")
         e.preventDefault();
         try {
-            await axios.post("http://localhost:5000/api/auth/register", formData);
+            const response = await axios.post("http://localhost:5000/api/auth/register", formData, {
+                withCredentials: true
+            });
             alert("Registration successful");
         } catch (error) {
-            alert("Error: " + error.response.data.message);
+            setError(error.response?.data?.message || "Registration failed. Please try again.");
         }
     };
 
@@ -28,9 +33,16 @@ const Register = () => {
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             />
+            <select
+                value={formData.role}
+                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+            >
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+            </select>
+            {error && <p className="error-message">{error}</p>}
             <button type="submit">Register</button>
         </form>
     );
 };
-
 export default Register;

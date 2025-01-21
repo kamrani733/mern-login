@@ -63,29 +63,24 @@ router.post("/login", async (req, res) => {
  * @desc Register a new user
  */
 router.post("/register", async (req, res) => {
-  const { username, password, role } = req.body;
+  const { username, password, role, email } = req.body;
 
-  if (!username || !password) {
-    return res.status(400).json({ error: "All fields are required" });
+  if (!username || !password || !role || !email) {
+    return res.status(400).json({ error: "Please provide all fields" });
   }
 
   try {
     const existingUser = await User.findOne({ username });
     if (existingUser) {
-      return res.status(400).json({ error: "User already exists" });
+      return res.status(400).json({ error: "Username already exists" });
     }
 
-    const userRole = role || "user";
+    const newUser = new User({ username, password, role, email });
+    await newUser.save();
 
-    const user = new User({
-      username,
-      password,
-      role: userRole,
-    });
-
-    await user.save();
-    res.status(201).json({ message: "User registered successfully" });
+    res.status(201).json({ message: "Registration successful" });
   } catch (err) {
+    console.error("Error during registration:", err);
     res.status(500).json({ error: "Server error" });
   }
 });

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [loading2, setLoading2] = useState(false);
   const navigate = useNavigate();
@@ -45,29 +46,34 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
   };
 
   const handleRegister = async () => {
-    if (!username || !password) {
+    console.log("Register button clicked");
+    if (!username || !password || !email) {
       setError("Please fill in all fields.");
       return;
     }
     setLoading2(true);
     try {
+      console.log("Sending registration request...");
       const response = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, password, role: role }),
+        body: JSON.stringify({ username, password, role: role, email }),
         credentials: "include",
       });
 
+      console.log("Registration response:", response);
       const data = await response.json();
+      console.log("Registration response data:", data);
+
       if (response.ok) {
         navigate("/");
       } else {
         setError(data.message || "Registration failed. Please try again.");
       }
     } catch (err) {
-      console.error("Error:", err);
+      console.error("Error during registration:", err);
       setError("Registration failed. Please try again.");
     } finally {
       setLoading2(false);
@@ -89,6 +95,13 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
         placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        className="input-field"
+      />
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
         className="input-field"
       />
 
