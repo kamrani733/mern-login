@@ -4,8 +4,10 @@ const User = require("../models/User");
 const authenticate = require("../middleware/authMiddleware");
 const multer = require("multer");
 const path = require("path");
+const cloudinary = require("../cloudinary");
 
 const router = express.Router();
+
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -23,10 +25,10 @@ const upload = multer({ storage });
  * @desc Login an existing user
  */
 router.post("/login", async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
@@ -37,7 +39,7 @@ router.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id, username: user.username, role: user.role },
+      { id: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -51,7 +53,7 @@ router.post("/login", async (req, res) => {
 
     return res.json({
       message: "Login successful",
-      user: { username: user.username, role: user.role },
+      user: { email: user.email, role: user.role },
     });
   } catch (error) {
     return res.status(500).json({ error: "Server error" });
@@ -63,19 +65,19 @@ router.post("/login", async (req, res) => {
  * @desc Register a new user
  */
 router.post("/register", async (req, res) => {
-  const { username, password, role, email } = req.body;
+  const { email, password, role } = req.body;
 
-  if (!username || !password || !role || !email) {
+  if (!email || !password || !role) {
     return res.status(400).json({ error: "Please provide all fields" });
   }
 
   try {
-    const existingUser = await User.findOne({ username });
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ error: "Username already exists" });
+      return res.status(400).json({ error: "Email already exists" });
     }
 
-    const newUser = new User({ username, password, role, email });
+    const newUser = new User({ email, password, role });
     await newUser.save();
 
     res.status(201).json({ message: "Registration successful" });
@@ -101,7 +103,6 @@ router.get("/protected", authenticate, (req, res) => {
  * @desc Logout a user by clearing the token
  */
 router.post("/logout", (req, res) => {
-  console.log("Logout route hit");
   res.clearCookie("token");
   res.status(200).json({ message: "Logged out successfully" });
 });
@@ -143,32 +144,30 @@ router.get("/profile", authenticate, async (req, res) => {
  * @route PUT /profile
  * @desc Update user profile
  */
-router.put(
-  "/profile",
-  authenticate,
-  upload.single("profilePicture"),
-  async (req, res) => {
-    const { email, bio } = req.body;
-    const profilePicture = req.file;
+router.put("/profile", authenticate, upload.single("profilePicture"), async (req, res) => {
+  try {
+    const { bio } = req.body;
+    const userId = req.user.id;
 
-    try {
-      const user = await User.findById(req.user.id);
-      if (!user) {
-        return res.status(404).json({ error: "User not found" });
-      }
-
-      user.email = email || user.email;
-      user.bio = bio || user.bio;
-      if (profilePicture) {
-        user.profilePicture = profilePicture.path;
-      }
-
-      await user.save();
-      res.status(200).json({ message: "Profile updated successfully", user });
-    } catch (err) {
-      res.status(500).json({ error: "Server error" });
+    let profilePictureUrl = null;
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "profile-pictures",
+      });
+      profilePictureUrl = result.secure_url;
     }
-  }
-);
 
-module.exports = router;
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { bio, profilePicture: profilePictureUrl },
+      { new: true }
+    );
+
+    res.status(200).json({ user: updatedUser });
+  } catch (err) {
+    console.error("Error updating profile:", err);
+    res.status(500).json({ message: "Error updating profile" });
+  }
+});
+
+module.exports = router;  

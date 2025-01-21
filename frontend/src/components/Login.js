@@ -2,16 +2,15 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
-  const [username, setUsername] = useState("");
+  const [email, setemail] = useState("");
   const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [loading2, setLoading2] = useState(false);
   const navigate = useNavigate();
   const [role, setRoleState] = useState("user");
 
   const handleLogin = async () => {
-    if (!username || !password) {
+    if (!email || !password) {
       setError("Please fill in all fields.");
       return;
     }
@@ -22,7 +21,7 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email, password }),
         credentials: "include",
       });
 
@@ -47,7 +46,7 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
 
   const handleRegister = async () => {
     console.log("Register button clicked");
-    if (!username || !password || !email) {
+    if (!email || !password  ) {
       setError("Please fill in all fields.");
       return;
     }
@@ -59,7 +58,7 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, password, role: role, email }),
+        body: JSON.stringify({ email, password, role: role }),
         credentials: "include",
       });
 
@@ -85,9 +84,9 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
       <h1 className="form-title">Login</h1>
       <input
         type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
+        placeholder="email"
+        value={email}
+        onChange={(e) => setemail(e.target.value)}
         className="input-field"
       />
       <input
@@ -97,13 +96,7 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
         onChange={(e) => setPassword(e.target.value)}
         className="input-field"
       />
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="input-field"
-      />
+     
 
       {error && <p className="error-message">{error}</p>}
       <div className="button-container">

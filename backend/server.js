@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
+const path = require("path");
 require("dotenv").config();
 
 const authRoutes = require("./routes/auth");
@@ -17,6 +18,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -24,10 +26,6 @@ mongoose
   .catch((err) => console.error("MongoDB connection error:", err));
 
 app.use("/api/auth", authRoutes);
-
-app.get("/", (req, res) => {
-  res.send("Welcome to the backend!");
-});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
