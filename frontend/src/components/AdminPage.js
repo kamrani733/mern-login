@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import Navbar from "./Navbar";
 
 const AdminPage = ({ handleLogout }) => {
   const [profile, setProfile] = useState(null);
@@ -27,29 +28,45 @@ const AdminPage = ({ handleLogout }) => {
   }, []);
 
   return (
-    <div className="profile-container">
-      {profile ? (
-        <div className="profile-info">
-          <h1>Admin</h1>
-          <p>Email: {profile.email}</p>
-          <p>Bio: {profile.bio}</p>
-          {profile.profilePicture && (
-            <img
-              src={profile.profilePicture}
-              alt="Profile"
-              style={{ width: "100px", height: "100px", borderRadius: "50%" }}
-            />
+    <div className="min-h-screen bg- -blue">
+      <div className="container mx-auto p-6">
+        <div className="max-w-3xl mx-auto  p-8 rounded-lg shadow-md">
+          <h1 className="text-3xl font-bold text-primary-yellow text-left mb-6">
+            Role: Admin
+          </h1>
+          {profile ? (
+            <div className="space-y-4">
+              <div className="flex items-center space-x-4">
+                {profile.profilePicture && (
+                  <img
+                    src={profile.profilePicture}
+                    alt="Profile"
+                    className="w-24 h-24 rounded-full object-cover"
+                  />
+                )}
+                <div>
+                  <p className="text-lg font-semibold text-primary-yellow">
+                    {profile.email}
+                  </p>
+                  <p className="text-secondary-yellow">{profile.bio}</p>
+                </div>
+              </div>
+              <div className="flex space-x-4">
+                <Link
+                  to="/edit-profile"
+                  className="bg-primary-yellow hover:bg-secondary-yellow text-white font-bold py-2 px-4 rounded transition duration-300"
+                >
+                  Edit Profile
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <p className="text-center text-secondary-yellow">
+              No profile data found.
+            </p>
           )}
         </div>
-      ) : (
-        <p>No profile data found.</p>
-      )}
-      <button className="button logout-btn" onClick={handleLogout}>
-        Logout
-      </button>
-      <Link to="/edit-profile" className="button save-btn">
-        Edit Profile
-      </Link>
+      </div>
     </div>
   );
 };

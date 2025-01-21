@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
-  const [email, setemail] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [loading2, setLoading2] = useState(false);
@@ -45,14 +45,12 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
   };
 
   const handleRegister = async () => {
-    console.log("Register button clicked");
-    if (!email || !password  ) {
+    if (!email || !password) {
       setError("Please fill in all fields.");
       return;
     }
     setLoading2(true);
     try {
-      console.log("Sending registration request...");
       const response = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
         headers: {
@@ -62,10 +60,7 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
         credentials: "include",
       });
 
-      console.log("Registration response:", response);
       const data = await response.json();
-      console.log("Registration response data:", data);
-
       if (response.ok) {
         navigate("/");
       } else {
@@ -80,40 +75,42 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
   };
 
   return (
-    <div className="form-container">
-      <h1 className="form-title">Login</h1>
-      <input
-        type="text"
-        placeholder="email"
-        value={email}
-        onChange={(e) => setemail(e.target.value)}
-        className="input-field"
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="input-field"
-      />
-     
-
-      {error && <p className="error-message">{error}</p>}
-      <div className="button-container">
-        <button
-          onClick={handleLogin}
-          className="button register-btn"
-          disabled={loading}
-        >
-          {loading ? "Logging in..." : "Login"}
-        </button>
-        <button
-          onClick={handleRegister}
-          className="button login-btn"
-          disabled={loading2}
-        >
-          {loading2 ? "Registering..." : "Register"}
-        </button>
+    <div className="min-h-screen flex items-center justify-center ">
+      <div className="  p-8 rounded-lg shadow-lg w-96">
+        <h1 className="text-2xl font-bold text-primary-yellow text-center mb-6">
+          Login
+        </h1>
+        <input
+          type="text"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full p-3 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-primary-yellow"
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full p-3 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-primary-yellow"
+        />
+        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+        <div className="flex flex-col space-y-4">
+          <button
+            onClick={handleLogin}
+            disabled={loading}
+            className="w-full bg-primary-yellow hover:bg-secondary-yellow text-white font-bold py-2 px-4 rounded-md transition duration-300 disabled:bg-gray-400"
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
+          <button
+            onClick={handleRegister}
+            disabled={loading2}
+            className="w-full bg-primary-yellow hover:bg-secondary-yellow text-white font-bold py-2 px-4 rounded-md transition duration-300 disabled:bg-gray-400"
+          >
+            {loading2 ? "Registering..." : "Register"}
+          </button>
+        </div>
       </div>
     </div>
   );

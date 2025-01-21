@@ -72,7 +72,7 @@ const EditProfile = ({ handleLogout }) => {
       );
       setProfile(data.user);
       alert("Profile updated successfully");
-      navigate("/User");  
+      navigate("/User");
     } catch (err) {
       console.error(
         "Error updating profile:",
@@ -87,38 +87,63 @@ const EditProfile = ({ handleLogout }) => {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen e">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-yellow"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="profile-container">
-      <form className="form-container" onSubmit={handleSubmit}>
-        <h1>Edit Your Profile</h1>
-        <div>
-          <label>Bio:</label>
-          <textarea
-            name="bio"
-            value={form.bio}
-            onChange={handleInputChange}
-          ></textarea>
-        </div>
-        <div>
-          <label>Profile Picture:</label>
-          <input
-            type="file"
-            name="profilePicture"
-            onChange={handleFileChange}
-          />
-        </div>
-        <div className="buttons">
-          <button type="submit" disabled={loading}>
-            {loading ? "Saving..." : "Save"}
-          </button>
-          <button type="button" onClick={() => navigate("/profile")}>
-            Cancel
-          </button>
-        </div>
-        {error && <p className="error-message">{error}</p>}
-      </form>
+    <div className="min-h-screen  flex items-center justify-center p-6">
+      <div className=" p-8 rounded-lg shadow-lg w-full max-w-3xl">
+        <h1 className="text-3xl font-bold text-primary-yellow mb-6">
+          Edit Profile
+        </h1>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-primary-yellow">
+              Bio:
+            </label>
+            <textarea
+              name="bio"
+              value={form.bio}
+              onChange={handleInputChange}
+              className="mt-1 block w-full p-3 border border-gray-300 rounded-md   text-primary-yellow focus:outline-none focus:ring-2 focus:ring-primary-yellow"
+              rows="4"
+            ></textarea>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-primary-yellow">
+              Profile Picture:
+            </label>
+            <input
+              type="file"
+              name="profilePicture"
+              onChange={handleFileChange}
+              className="mt-1 block w-full p-3 border border-gray-300 rounded-md   text-primary-yellow focus:outline-none focus:ring-2 focus:ring-primary-yellow"
+            />
+          </div>
+          <div className="flex justify-end space-x-4">
+            <button
+              type="button"
+              onClick={() => navigate("/User")}
+              className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded transition duration-300"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="bg-primary-yellow hover:bg-secondary-yellow text-white font-bold py-2 px-4 rounded transition duration-300 disabled:bg-gray-400"
+            >
+              {loading ? "Saving..." : "Save"}
+            </button>
+          </div>
+          {error && <p className="text-red-500 text-center">{error}</p>}
+        </form>
+      </div>
     </div>
   );
 };

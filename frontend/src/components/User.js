@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
 
-const User = ({ handleLogout }) => {
+const User = ({ role, handleLogout }) => {
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState("");
 
@@ -27,29 +26,31 @@ const User = ({ handleLogout }) => {
   }, []);
 
   return (
-    <div className="profile-container">
+    <div className=" max-w-3xl mx-auto  p-8 rounded-lg shadow-md mt-5 ">
+      <h1 className="text-2xl font-bold text-primary-yellow mb-4">Role: User</h1>
       {profile ? (
-        <div className="profile-info">
-          <h1>User</h1>
-          <p>Email: {profile.email}</p>
-          <p>Bio: {profile.bio}</p>
-          {profile.profilePicture && (
-            <img
-              src={profile.profilePicture}
-              alt="Profile"
-              style={{ width: "100px", height: "100px", borderRadius: "50%" }}
-            />
-          )}
+        <div className="space-y-4">
+          <div className="flex items-center space-x-4">
+            {profile.profilePicture && (
+              <img
+                src={profile.profilePicture}
+                alt="Profile"
+                className="w-24 h-24 rounded-full object-cover"
+              />
+            )}
+            <div>
+              <p className="text-lg font-semibold text-primary-yellow">
+                {profile.email}
+              </p>
+              <p className="text-secondary-yellow">{profile.bio}</p>
+            </div>
+          </div>
         </div>
       ) : (
-        <p>No profile data found.</p>
+        <p className="text-center text-secondary-yellow">
+          No profile data found.
+        </p>
       )}
-      <button className="button logout-btn" onClick={handleLogout}>
-        Logout
-      </button>
-      <Link to="/edit-profile" className="button save-btn">
-        Edit Profile
-      </Link>
     </div>
   );
 };
