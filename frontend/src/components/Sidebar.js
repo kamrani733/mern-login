@@ -22,6 +22,16 @@ const Sidebar = ({ role }) => {
             Edit Profile
           </Link>
         </li>
+        {role === "admin" && (
+          <li>
+            <Link
+              to="/users"
+              className="block py-2 px-4 hover:bg-secondary-blue rounded transition duration-300"
+            >
+              Users
+            </Link>
+          </li>
+        )}
       </ul>
     </div>
   );
