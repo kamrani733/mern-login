@@ -115,7 +115,13 @@ const App = () => {
           />
           <Route
             path="/edit-profile"
-            element={<EditProfile handleLogout={handleLogout} />}
+            element={
+              isLoggedIn ? (
+                <EditProfile handleLogout={handleLogout} />
+              ) : (
+                <Navigate to="/" />
+              )
+            }
           />
         </Routes>
       </Router>
