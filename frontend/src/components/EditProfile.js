@@ -1,3 +1,4 @@
+// components/EditProfile.js
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -72,7 +73,7 @@ const EditProfile = ({ handleLogout }) => {
       );
       setProfile(data.user);
       alert("Profile updated successfully");
-      navigate("/User");  
+      navigate("/User");
     } catch (err) {
       console.error(
         "Error updating profile:",
@@ -87,37 +88,56 @@ const EditProfile = ({ handleLogout }) => {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-100">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="profile-container">
-      <form className="form-container" onSubmit={handleSubmit}>
-        <h1>Edit Your Profile</h1>
+    <div className="bg-white p-6 rounded-lg shadow-md">
+      <h1 className="text-2xl font-bold mb-4">Edit Profile</h1>
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label>Bio:</label>
+          <label className="block text-sm font-medium text-gray-700">Bio:</label>
           <textarea
             name="bio"
             value={form.bio}
             onChange={handleInputChange}
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            rows="4"
           ></textarea>
         </div>
         <div>
-          <label>Profile Picture:</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Profile Picture:
+          </label>
           <input
             type="file"
             name="profilePicture"
             onChange={handleFileChange}
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
           />
         </div>
-        <div className="buttons">
-          <button type="submit" disabled={loading}>
-            {loading ? "Saving..." : "Save"}
-          </button>
-          <button type="button" onClick={() => navigate("/profile")}>
+        <div className="flex justify-end space-x-4">
+          <button
+            type="button"
+            onClick={() => navigate("/User")}
+            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+          >
             Cancel
           </button>
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            {loading ? "Saving..." : "Save"}
+          </button>
         </div>
-        {error && <p className="error-message">{error}</p>}
+        {error && <p className="text-red-500 text-center">{error}</p>}
       </form>
     </div>
   );
