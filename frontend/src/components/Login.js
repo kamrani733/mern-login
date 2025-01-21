@@ -75,38 +75,38 @@ const Login = ({ setIsLoggedIn, setError, error, setRole }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-96">
-        <h1 className="text-2xl font-bold text-center mb-6">Login</h1>
+    <div className="min-h-screen flex items-center justify-center ">
+      <div className="  p-8 rounded-lg shadow-lg w-96">
+        <h1 className="text-2xl font-bold text-primary-yellow text-center mb-6">
+          Login
+        </h1>
         <input
           type="text"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-3 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-3 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-primary-yellow"
         />
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-3 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-3 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-primary-yellow"
         />
-        {error && (
-          <p className="text-red-500 text-center mb-4">{error}</p>
-        )}
+        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         <div className="flex flex-col space-y-4">
           <button
             onClick={handleLogin}
             disabled={loading}
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300 disabled:bg-blue-300"
+            className="w-full bg-primary-yellow hover:bg-secondary-yellow text-white font-bold py-2 px-4 rounded-md transition duration-300 disabled:bg-gray-400"
           >
             {loading ? "Logging in..." : "Login"}
           </button>
           <button
             onClick={handleRegister}
             disabled={loading2}
-            className="w-full bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition duration-300 disabled:bg-green-300"
+            className="w-full bg-primary-yellow hover:bg-secondary-yellow text-white font-bold py-2 px-4 rounded-md transition duration-300 disabled:bg-gray-400"
           >
             {loading2 ? "Registering..." : "Register"}
           </button>

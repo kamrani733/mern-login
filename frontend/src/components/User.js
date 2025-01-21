@@ -1,4 +1,3 @@
-// components/User.js
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -27,8 +26,8 @@ const User = ({ role, handleLogout }) => {
   }, []);
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h1 className="text-2xl font-bold mb-4"> Role : User</h1>
+    <div className=" max-w-3xl mx-auto  p-8 rounded-lg shadow-md mt-5 ">
+      <h1 className="text-2xl font-bold text-primary-yellow mb-4">Role: User</h1>
       {profile ? (
         <div className="space-y-4">
           <div className="flex items-center space-x-4">
@@ -40,13 +39,17 @@ const User = ({ role, handleLogout }) => {
               />
             )}
             <div>
-              <p className="text-lg font-semibold">{profile.email}</p>
-              <p className="text-gray-600">{profile.bio}</p>
+              <p className="text-lg font-semibold text-primary-yellow">
+                {profile.email}
+              </p>
+              <p className="text-secondary-yellow">{profile.bio}</p>
             </div>
           </div>
         </div>
       ) : (
-        <p className="text-center text-gray-600">No profile data found.</p>
+        <p className="text-center text-secondary-yellow">
+          No profile data found.
+        </p>
       )}
     </div>
   );

@@ -9,9 +9,10 @@ import Login from "./components/Login";
 import User from "./components/User";
 import AdminPage from "./components/AdminPage";
 import EditProfile from "./components/EditProfile";
-import Navbar from "./components/Navbar";  
-import Sidebar from "./components/Sidebar";  
-import  "./App.css";
+import Navbar from "./components/Navbar";
+import Sidebar from "./components/Sidebar";
+import "./App.css";
+
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [role, setRole] = useState("user");
@@ -61,8 +62,8 @@ const App = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-100">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="flex items-center justify-center h-screen bg-dark-blue">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-yellow"></div>
       </div>
     );
   }
@@ -70,9 +71,9 @@ const App = () => {
   return (
     <Router>
       {isLoggedIn && <Navbar role={role} handleLogout={handleLogout} />}
-      <div className="flex">
+      <div className="flex   min-h-screen">
         {isLoggedIn && <Sidebar role={role} />}
-        <div className="flex-1 p-6">
+        <div className="flex-1  ">
           <Routes>
             <Route
               path="/"
